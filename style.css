@@ -1,0 +1,172 @@
+/* =========================================================
+   Minimal Burger UI — базовый слой
+   Прячем родной top-bar и лишнюю хромку, расширяем чат на весь экран.
+   Все спрятанные элементы остаются в DOM и кликаются из JS —
+   просто визуально не отображаются.
+   ========================================================= */
+
+:root {
+    --mbu-burger-size: 40px;
+    --mbu-panel-width: min(300px, 86vw);
+}
+
+/* ---------- Прячем родной топ-бар полностью ---------- */
+#top-bar,
+#top-settings-holder {
+    display: none !important;
+}
+
+/* Чат растягиваем на весь экран, т.к. топ-бара больше нет */
+#sheld {
+    top: 0 !important;
+    height: calc(100dvh - var(--bottomFormBlockSize, 40px)) !important;
+    max-height: calc(100dvh - var(--bottomFormBlockSize, 40px)) !important;
+    min-height: calc(100dvh - var(--bottomFormBlockSize, 40px)) !important;
+    margin-top: 0 !important;
+}
+
+#chat {
+    padding-top: 10px !important;
+}
+
+/* ---------- Кнопка-бургер ---------- */
+#mbu-burger {
+    position: fixed;
+    top: max(8px, env(safe-area-inset-top));
+    left: 8px;
+    z-index: 9999;
+    width: var(--mbu-burger-size);
+    height: var(--mbu-burger-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    color: var(--SmartThemeBodyColor, #fff);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    font-size: 18px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+#mbu-burger:active {
+    transform: scale(0.92);
+}
+
+/* ---------- Затемнение фона при открытой панели ---------- */
+#mbu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9997;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+#mbu-overlay.mbu-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ---------- Боковая панель ---------- */
+#mbu-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--mbu-panel-width);
+    z-index: 9998;
+    background: rgba(20, 20, 20, 0.92);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+    padding: calc(var(--mbu-burger-size) + 24px) 14px 24px 14px;
+    box-sizing: border-box;
+    color: var(--SmartThemeBodyColor, #fff);
+}
+#mbu-panel.mbu-open {
+    transform: translateX(0);
+}
+
+.mbu-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+    margin: 18px 0 6px 4px;
+}
+.mbu-section-title:first-child {
+    margin-top: 0;
+}
+
+.mbu-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+.mbu-btn:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+.mbu-btn i {
+    width: 18px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+/* =========================================================
+   Минимализм в самом чате
+   ========================================================= */
+
+/* Прячем по умолчанию служебные бейджи сообщений */
+.mesIDDisplay,
+.mes_timer,
+.tokenCounterDisplay {
+    display: none !important;
+}
+
+/* Кнопки сообщения показываем только на самом свежем сообщении / по тапу,
+   остальные — скрываем, чтобы не загромождали вид */
+.mes_buttons {
+    opacity: 0.35;
+    transition: opacity 0.2s ease;
+}
+.mes:hover .mes_buttons,
+.mes:active .mes_buttons,
+.mes.last_mes .mes_buttons {
+    opacity: 1;
+}
+
+/* ---------- Нижняя форма ввода: оставляем только текст + отправку ---------- */
+#leftSendForm > *:not(#mbu-input-proxy-slot),
+#rightSendForm > *:not(#send_but):not(#mes_stop) {
+    display: none !important;
+}
+
+#send_form {
+    border-radius: 18px !important;
+}
+
+/* ---------- Мобильная адаптация ---------- */
+@media (max-width: 600px) {
+    :root {
+        --mbu-panel-width: 82vw;
+    }
+    #mbu-burger {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
